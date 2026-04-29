@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guiding Activities - Median &amp; Modus</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&amp;family=Lato:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    .font-heading { font-family: 'Merriweather', Georgia, serif; }
+    .font-body { font-family: 'Lato', sans-serif; }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes bounce-light {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in-down { animation: fadeInDown 0.8s ease-out; }
+    .animate-fade-in-up { animation: fadeInUp 0.8s ease-out 0.2s both; }
+    .animate-slide-in-left { animation: slideInLeft 0.8s ease-out 0.3s both; }
+    .animate-slide-in-right { animation: slideInRight 0.8s ease-out 0.4s both; }
+    .animate-bounce-light { animation: bounce-light 3s ease-in-out infinite; }
+    .answer-slide { animation: slideDown 0.4s ease; }
+
+    .serabi-bg {
+      background: linear-gradient(135deg, #FDF6EC 0%, #FFFCF5 100%);
+      position: relative;
+    }
+    .serabi-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(196, 145, 68, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(196, 145, 68, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .activity-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .activity-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(196, 145, 68, 0.15);
+    }
+
+    .card-number {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #FDF6EC;
+      background: linear-gradient(135deg, #C49144 0%, #A07432 100%);
+      flex-shrink: 0;
+    }
+
+    .answer-box {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .answer-box.show {
+      max-height: 2000px;
+    }
+
+    .toggle-btn {
+      background: linear-gradient(135deg, #C49144 0%, #A07432 100%);
+      color: #FDF6EC;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+    .toggle-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(196, 145, 68, 0.3);
+    }
+
+    .icon-wrapper {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background-color: #C49144;
+      color: #FDF6EC;
+    }
+
+    .tip-box {
+      background: linear-gradient(135deg, #F5DFA0 0%, #FFFCF5 100%);
+      border-left: 4px solid #C49144;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .step-indicator {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background-color: #C49144;
+      color: #FDF6EC;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 32px;
+      font-weight: bold;
+      font-size: 14px;
+      margin-right: 8px;
+    }
+
+    .concept-box {
+      background-color: #FFFCF5;
+      border: 2px solid #E8D5B0;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 8px 0;
+    }
+
+    .example-highlight {
+      background-color: #F5DFA0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #A07432;
+    }
+
+    .answer-box.show .answer-content {
+      animation: slideDown 0.4s ease;
+    }
+
+    .learning-path {
+      background: linear-gradient(135deg, #F5DFA0 0%, #FDF6EC 100%);
+      border: 2px solid #C49144;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .path-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .path-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #C49144 0%, #A07432 100%);
+      color: #FDF6EC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .activity-steps {
+      background-color: #FFFCF5;
+      border-left: 5px solid #C49144;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 12px 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-number {
+      min-width: 36px;
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #C49144 0%, #A07432 100%);
+      color: #FDF6EC;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-content-title {
+      font-weight: 600;
+      color: #3B2412;
+      margin-bottom: 6px;
+    }
+
+    .step-content-text {
+      color: #5C3D1E;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      background-color: #FFFCF5;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, #C49144 0%, #A07432 100%);
+      color: #FDF6EC;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid #D4A574;
+    }
+
+    .data-table td {
+      padding: 10px 12px;
+      text-align: center;
+      border: 1px solid #E8D5B0;
+      color: #5C3D1E;
+    }
+
+    .data-table tr:nth-child(even) {
+      background-color: #F5DFA0;
+    }
+
+    .ethno-box {
+      background: linear-gradient(135deg, #E8D5B0 0%, #FDF6EC 100%);
+      border: 2px solid #C49144;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+
+    .ethno-title {
+      font-weight: 700;
+      color: #A07432;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ethno-text {
+      color: #5C3D1E;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .steam-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .steam-s { background-color: #FFE5B4; color: #A07432; }
+    .steam-t { background-color: #B4D9FF; color: #2B5A8C; }
+    .steam-e { background-color: #D9B4FF; color: #6B3BA7; }
+    .steam-a { background-color: #B4FFD9; color: #2B7A56; }
+    .steam-m { background-color: #FFB4B4; color: #8C2B2B; }
+
+    .problem-box {
+      background: linear-gradient(135deg, #FFF9E6 0%, #FFFCF5 100%);
+      border: 3px solid #C49144;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .problem-title {
+      font-weight: 700;
+      color: #3B2412;
+      font-size: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-body">
+  <div id="app-wrapper" class="w-full h-full overflow-auto serabi-bg">
+   <div class="max-w-5xl mx-auto px-5 py-12 relative z-10">
+    <!-- Header -->
+    <div class="animate-fade-in-down text-center mb-12">
+     <div class="badge mb-4"><i data-lucide="play-circle" style="width: 14px; height: 14px; display: inline-block; margin-right: 6px; vertical-align: text-bottom;"></i> GUIDING ACTIVITIES
+     </div>
+     <h1 class="font-heading text-5xl md:text-6xl font-bold leading-tight mb-4" id="el-main-title" style="color: #3B2412;">Kegiatan Pembelajaran</h1>
+     <p class="text-xl md:text-2xl" id="el-subtitle" style="color: #8B6F4E;">Mari Belajar Median &amp; Modus dengan Eksperimen</p>
+     <div class="flex justify-center gap-2 mt-6">
+      <div style="width: 60px; height: 4px; background-color: #C49144; border-radius: 2px;"></div>
+      <div style="width: 60px; height: 4px; background-color: #D4A574; border-radius: 2px; opacity: 0.6;"></div>
+      <div style="width: 60px; height: 4px; background-color: #E8D5B0; border-radius: 2px; opacity: 0.4;"></div>
+     </div>
+    </div><!-- Intro Box -->
+    <div class="animate-fade-in-up rounded-2xl p-8 mb-10" style="background-color: #FFFCF5; border-left: 5px solid #C49144; box-shadow: 0 4px 12px rgba(196, 145, 68, 0.08);">
+     <div class="flex items-start gap-4">
+      <div class="icon-wrapper" style="background-color: #F5DFA0;">
+       🎬
+      </div>
+      <div>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #C49144;">Apa Itu Guiding Activities?</h3>
+       <div>
+        <img src="g1.jpg" alt="aktiviktas siswa">
+       </div>
+       <p class="leading-relaxed" id="el-intro-text" style="color: #5C3D1E;">Kegiatan pembelajaran ini adalah aktivitas terpandu untuk membantu kamu menerapkan konsep median dan modus dalam situasi nyata. Melalui pengamatan, analisis data, dan diskusi, kamu akan memahami bagaimana statistika membantu pemain Serabi Ngampin membuat keputusan bisnis yang lebih baik! 📊</p>
+      </div>
+     </div>
+    </div><!-- Activity 1: Observasi Data -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       1️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">AKTIVITAS 1</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">Mengamati Data Penjualan</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Amati data penjualan serabi selama satu minggu dan identifikasi pola yang ada</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div>
+        <img src="g2.webp" alt="">
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="activity-steps">
+        <div class="step-item">
+         <div class="step-number">
+          1
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">📋 Kumpulkan Data</p>
+          <p class="step-content-text">Lihat data penjualan serabi Ngampin selama 10 hari berturut-turut yang dicatat penjual.</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          2
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">👀 Amati Data</p>
+          <p class="step-content-text">Lihat dengan seksama: Nilai mana yang sering muncul? Nilai mana yang paling jarang? Ada nilai yang sangat tinggi atau sangat rendah?</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          3
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">📝 Catat Observasi</p>
+          <p class="step-content-text">Tulis pengamatanmu: "Nilai yang paling sering adalah... Nilai tertinggi adalah... Nilai terendah adalah..."</p>
+         </div>
+        </div>
+       </div>
+       <div class="concept-box">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">📊 Data Penjualan Serabi (10 hari):</p>
+        <table class="data-table">
+         <tbody>
+          <tr>
+           <th>Hari</th>
+           <th>Potongan Serabi Terjual</th>
+          </tr>
+          <tr>
+           <td><strong>Hari 1</strong></td>
+           <td>20 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 2</strong></td>
+           <td>25 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 3</strong></td>
+           <td>30 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 4</strong></td>
+           <td>25 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 5</strong></td>
+           <td>35 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 6</strong></td>
+           <td>25 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 7</strong></td>
+           <td>40 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 8</strong></td>
+           <td>30 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 9</strong></td>
+           <td>25 porsi</td>
+          </tr>
+          <tr>
+           <td><strong>Hari 10</strong></td>
+           <td>28 porsi</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="tip-box">
+        <p style="color: #A07432; font-weight: 600;"><i data-lucide="lightbulb" style="width: 14px; height: 14px; display: inline; vertical-align: text-bottom;"></i> Tips Observasi:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 6px;">Gunakan jari untuk menunjuk setiap angka saat membaca. Hitung berapa kali angka 25 muncul, berapa kali 30 muncul, dst. Ini akan memudahkan mu menemukan modus!</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Activity 2: Mengurutkan Data -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       2️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">AKTIVITAS 2</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">Mengurutkan Data Dari Terkecil ke Terbesar</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Susun ulang data penjualan dari nilai yang paling kecil hingga paling besar</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="activity-steps">
+        <div class="step-item">
+         <div class="step-number">
+          1
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">🔢 Temukan Nilai Terkecil</p>
+          <p class="step-content-text">Cari angka paling kecil dari seluruh data. Tulis di paling depan.</p>
+          <p style="color: #5C3D1E; font-size: 13px; font-style: italic; margin-top: 6px;">Nilai terkecil: <span class="example-highlight">20</span></p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          2
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">➡️ Lanjutkan Mengurutkan</p>
+          <p class="step-content-text">Setelah 20, cari angka berikutnya yang terkecil. Terus lakukan hingga semua data terurut.</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          3
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">✅ Verifikasi Urutan</p>
+          <p class="step-content-text">Periksa: Apakah setiap angka lebih besar dari sebelumnya? Apakah ada yang terlewat?</p>
+         </div>
+        </div>
+       </div>
+       <div class="concept-box">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">📊 Hasil Pengurutan Data:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-bottom: 8px; font-family: monospace; background-color: #F5DFA0; padding: 12px; border-radius: 6px; line-height: 1.8;"><strong>20, 25, 25, 25, 25, 28, 30, 30, 35, 40</strong></p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 8px;"><strong>Total data:</strong> 10 angka | <strong>Dari:</strong> 20 | <strong>Sampai:</strong> 40</p>
+       </div>
+       <div class="tip-box">
+        <p style="color: #A07432; font-weight: 600;"><i data-lucide="lightbulb" style="width: 14px; height: 14px; display: inline; vertical-align: text-bottom;"></i> Tip Pengurutan:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 6px;">Gunakan kertas dan pensil! Tulis angka-angka di selembar kertas, kemudian potong-potong dan tata dari kecil ke besar. Cara ini lebih mudah dan tidak mudah salah.</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Activity 3: Menentukan Median -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       3️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">AKTIVITAS 3</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">Menentukan Median (Nilai Tengah)</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Temukan nilai tengah dari data yang sudah terurut</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="activity-steps">
+        <div class="step-item">
+         <div class="step-number">
+          1
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">🔢 Hitung Jumlah Data</p>
+          <p class="step-content-text">Berapa banyak angka dalam data? Kita punya 10 angka (GENAP), jadi nilai tengah ada 2 angka di tengah.</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          2
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">👉 Tentukan Posisi Tengah</p>
+          <p class="step-content-text">Data genap: (10 ÷ 2) = 5 dan (5 + 1) = 6. Jadi ambil data ke-5 dan ke-6.</p>
+          <p style="color: #5C3D1E; font-size: 13px; font-style: italic; margin-top: 6px;">Data ke-5: <span class="example-highlight">25</span> | Data ke-6: <span class="example-highlight">28</span></p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          3
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">➕ Hitung Rata-rata Dua Nilai Tengah</p>
+          <p class="step-content-text">Median = (25 + 28) ÷ 2 = 53 ÷ 2 = <span class="example-highlight">26,5</span></p>
+         </div>
+        </div>
+       </div>
+       <div class="concept-box">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">📊 Visualisasi Data Terurut:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-bottom: 8px; font-family: monospace; background-color: #F5DFA0; padding: 12px; border-radius: 6px;">20, 25, 25, 25, <span style="background-color: #FFB4B4; padding: 4px;">25,</span> <span style="background-color: #FFB4B4; padding: 4px;">28</span>, 30, 30, 35, 40</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 8px;"><strong>5 angka di kiri │ 5 angka di kanan</strong></p>
+        <p style="color: #3B2412; font-weight: 600; margin-top: 12px;">✅ Hasil: <span class="example-highlight">MEDIAN = 26,5 porsi</span></p>
+       </div>
+       <div class="tip-box">
+        <p style="color: #A07432; font-weight: 600;"><i data-lucide="lightbulb" style="width: 14px; height: 14px; display: inline; vertical-align: text-bottom;"></i> Cara Cepat Mencari Median:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 6px;">Mulai dari awal dan akhir secara bersamaan (coret dari depan 1, dari belakang 1, ulangi) sampai mencapai tengah!</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Activity 4: Menentukan Modus -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       4️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">AKTIVITAS 4</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">Menentukan Modus (Nilai Paling Sering)</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Hitung frekuensi setiap nilai dan temukan yang paling sering muncul</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="activity-steps">
+        <div class="step-item">
+         <div class="step-number">
+          1
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">📋 Buat Daftar Frekuensi</p>
+          <p class="step-content-text">Tulis semua nilai yang berbeda, lalu hitung berapa kali masing-masing muncul dalam data.</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          2
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">✅ Hitung Frekuensi</p>
+          <p class="step-content-text">Gunakan tally mark (garis-garis) untuk menghitung, atau baca data terurut yang sudah kita buat.</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          3
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">🏆 Temukan Frekuensi Tertinggi</p>
+          <p class="step-content-text">Nilai mana yang muncul paling banyak? Itulah modus!</p>
+         </div>
+        </div>
+       </div>
+       <div class="concept-box">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">📊 Tabel Frekuensi:</p>
+        <table class="data-table">
+         <tbody>
+          <tr>
+           <th>Nilai Penjualan (Porsi)</th>
+           <th>Frekuensi (Berapa Kali Muncul)</th>
+          </tr>
+          <tr>
+           <td><strong>20</strong></td>
+           <td>1 kali</td>
+          </tr>
+          <tr>
+           <td><strong>25</strong></td>
+           <td style="background-color: #FFB4B4; font-weight: 600;">4 kali ← TERBANYAK! 🏆</td>
+          </tr>
+          <tr>
+           <td><strong>28</strong></td>
+           <td>1 kali</td>
+          </tr>
+          <tr>
+           <td><strong>30</strong></td>
+           <td>2 kali</td>
+          </tr>
+          <tr>
+           <td><strong>35</strong></td>
+           <td>1 kali</td>
+          </tr>
+          <tr>
+           <td><strong>40</strong></td>
+           <td>1 kali</td>
+          </tr>
+         </tbody>
+        </table>
+        <p style="color: #3B2412; font-weight: 600; margin-top: 12px;">✅ Hasil: <span class="example-highlight">MODUS = 25 porsi</span></p>
+       </div>
+       <div class="tip-box">
+        <p style="color: #A07432; font-weight: 600;"><i data-lucide="lightbulb" style="width: 14px; height: 14px; display: inline; vertical-align: text-bottom;"></i> Cara Cepat Menghitung:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 6px;">Dari data terurut, cari nilai yang memiliki "kelompok" angka sama yang paling panjang! Data: 20, 25, 25, 25, 25, ← ini kelompok 25 yang panjang! Jadi modus = 25!</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Activity 5: Diskusi -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       5️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">AKTIVITAS 5</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">Mendiskusikan Hasil &amp; Membuat Kesimpulan</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Analisis hasil median dan modus, lalu buatlah rekomendasi untuk penjual</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="activity-steps">
+        <div class="step-item">
+         <div class="step-number">
+          1
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">💭 Bandingkan Median &amp; Modus</p>
+          <p class="step-content-text">Median = 26,5 vs Modus = 25. Kenapa berbeda? Apakah perbedaan ini penting?</p>
+          <p style="color: #5C3D1E; font-size: 13px; margin-top: 6px;">Jawaban: Median sedikit lebih tinggi karena ada nilai ekstrem (40). Modus lebih "realistis" untuk pola harian.</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          2
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">🤔 Diskusikan Pertanyaan</p>
+          <p class="step-content-text">• Berapa porsi yang sebaiknya penjual siapkan setiap hari?<br>
+           • Apakah harus sama persis dengan median atau modus?<br>
+           • Bagaimana jika ada hari spesial?</p>
+         </div>
+        </div>
+        <div class="step-item">
+         <div class="step-number">
+          3
+         </div>
+         <div class="step-content">
+          <p class="step-content-title">📝 Buat Kesimpulan</p>
+          <p class="step-content-text">Tulis rekomendasi untuk penjual berdasarkan analisis median dan modus. Berikan alasan yang jelas.</p>
+         </div>
+        </div>
+       </div>
+       <div class="concept-box">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">🎯 Contoh Kesimpulan:</p>
+        <p style="color: #5C3D1E; font-size: 14px; line-height: 1.8;">"Berdasarkan analisis data penjualan 10 hari, penjual sebaiknya menyiapkan <strong>25-27 porsi serabi setiap harinya</strong>. Alasannya:<br>
+          ✓ Modus = 25 menunjukkan pola penjualan yang paling sering<br>
+          ✓ Median = 26,5 menunjukkan nilai yang seimbang<br>
+          ✓ Dengan target 25-27, penjual tidak akan terlalu banyak stok sisa dan tidak kekurangan bahan<br>
+          ✓ Pada hari-hari libur atau festival, penjual bisa menambah produksi hingga 30-40 porsi"</p>
+       </div>
+       <div class="tip-box">
+        <p style="color: #A07432; font-weight: 600;"><i data-lucide="lightbulb" style="width: 14px; height: 14px; display: inline; vertical-align: text-bottom;"></i> Tips Diskusi Kelompok:</p>
+        <p style="color: #5C3D1E; font-size: 14px; margin-top: 6px;">Dengarkan pendapat teman! Mungkin ada perspektif lain yang belum kamu pikirkan. Diskusi membuat pemahaman lebih kaya! 💬</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Activity 6: Activity Practice Problems -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       6️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">SOAL LATIHAN 1</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">🥄 Masalah 1: Konsistensi Takaran Adonan Serabi</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Analisis jangkauan data dan implikasinya terhadap kualitas produk</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="problem-box">
+        <div class="problem-title">
+         📖 Konteks Masalah:
+        </div>
+        <p style="color: #5C3D1E; line-height: 1.8; margin-bottom: 12px;">Di sebuah pasar, penjual serabi ngampin membuat serabi secara tradisional menggunakan sendok sayur untuk menuang adonan ke dalam cetakan. Namun, beberapa pelanggan mulai memberikan masukan bahwa ukuran dan ketebalan serabi terkadang berbeda—ada yang terasa lebih tebal dan ada yang lebih tipis. Hal ini ternyata dipengaruhi oleh banyaknya adonan yang dituangkan ke dalam cetakan.<br><br>
+          Karena ingin memperbaiki kualitas dagangannya, penjual mencoba melakukan evaluasi sederhana dengan menimbang beberapa adonan yang sudah dituangkan ke dalam cetakan sebelum dimasak. Dari hasil pengukuran tersebut, diperoleh data berat adonan sebagai berikut:</p>
+        <table class="data-table">
+         <tbody>
+          <tr>
+           <th>Centong ke-</th>
+           <th>Berat Adonan</th>
+          </tr>
+          <tr>
+           <td>1</td>
+           <td>57 gram</td>
+          </tr>
+          <tr>
+           <td>2</td>
+           <td>60 gram</td>
+          </tr>
+          <tr>
+           <td>3</td>
+           <td>58 gram</td>
+          </tr>
+          <tr>
+           <td>4</td>
+           <td>62 gram</td>
+          </tr>
+          <tr>
+           <td>5</td>
+           <td>59 gram</td>
+          </tr>
+          <tr>
+           <td>6</td>
+           <td>61 gram</td>
+          </tr>
+          <tr>
+           <td>7</td>
+           <td>58 gram</td>
+          </tr>
+         </tbody>
+        </table>
+        <p style="color: #5C3D1E; line-height: 1.8; margin-top: 12px;"><strong>Informasi Penting:</strong> Penjual menetapkan bahwa selisih berat adonan yang masih dapat diterima tidak lebih dari 4 gram agar hasil serabi tetap seragam.</p>
+       </div><!-- Solution Walkthrough -->
+       <div style="background-color: #F5DFA0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">✅ SOLUSI &amp; PENJELASAN:</p>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">Step 1: Identifikasi Nilai Minimum dan Maksimum</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.6;">Dari data: 57, 60, 58, 62, 59, 61, 58<br><strong>Nilai Minimum (terkecil):</strong> <span class="example-highlight">57 gram</span><br><strong>Nilai Maksimum (terbesar):</strong> <span class="example-highlight">62 gram</span></p>
+        </div>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">Step 2: Hitung Jangkauan (Range)</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.6;"><strong>Jangkauan = Nilai Maksimum - Nilai Minimum</strong><br>
+           Jangkauan = 62 - 57 = <span class="example-highlight">5 gram</span></p>
+        </div>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">Step 3: Bandingkan dengan Standar Penjual</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.6;"><strong>Standar Penjual:</strong> Selisih tidak lebih dari 4 gram<br><strong>Jangkauan Data:</strong> 5 gram<br><strong>Kesimpulan:</strong> 5 gram &gt; 4 gram ⚠️ <span style="color: #C49144; font-weight: 600;">TIDAK SESUAI STANDAR</span></p>
+        </div>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">🎯 JAWABAN AKHIR:</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.8; margin-bottom: 8px;"><strong>Jangkauan = 5 gram</strong><br><br><strong>Arti Nilai Jangkauan dalam Konteks Pembuatan Serabi:</strong><br>
+           • Jangkauan 5 gram berarti ada perbedaan sebesar 5 gram antara adonan terkecil (57g) dan terbesar (62g)<br>
+           • Perbedaan ini ternyata MELEBIHI toleransi penjual yang hanya 4 gram<br>
+           • Hal ini menunjukkan bahwa teknik penuangan adonan penjual masih KURANG KONSISTEN<br>
+           • Akibatnya, serabi yang dihasilkan akan berbeda-beda ukuran dan ketebalannya<br>
+           • Penjual perlu melatih teknik penuangan agar lebih presisi dan konsisten<br>
+           • Target: Kurangi jangkauan dari 5 gram menjadi ≤ 4 gram</p>
+        </div>
+       </div><!-- Ethnomathematics Section -->
+       <div class="ethno-box">
+        <div class="ethno-title"><i data-lucide="globe" style="width: 18px; height: 18px;"></i> Etnomatematika: Praktek Tradisional &amp; Standar Mutu
+        </div>
+        <div class="ethno-text">
+         <p style="margin-bottom: 10px;"><strong>🎨 Praktik Tradisional:</strong> Penjual serabi ngampin menggunakan <strong>"sendok sayur"</strong> sebagai alat pengukur, bukan timbangan digital. Ini adalah pengetahuan lokal yang diwariskan turun-temurun. Namun, metode tradisional ini rentan terhadap ketidakkonsistenan.</p>
+         <p style="margin-bottom: 10px;"><strong>📊 Standar Mutu (Ukuran Jangkauan):</strong> Dengan menggunakan jangkauan data (range), penjual dapat mengukur SEBERAPA BESAR variasi dalam proses mereka. Jangkauan 5 gram menunjukkan bahwa proses masih belum optimal. Ini mendemonstrasikan bagaimana matematika (statistika) dapat meningkatkan kualitas produk tradisional.</p>
+         <p><strong>🔄 Koneksi:</strong> Etnomatematika di sini menunjukkan integrasi pengetahuan tradisional (sendok sebagai alat ukur) dengan konsep matematis modern (jangkauan/range) untuk mencapai standar mutu yang lebih baik.</p>
+        </div>
+       </div><!-- STEAM Breakdown -->
+       <div style="background-color: #FFFCF5; border: 2px solid #E8D5B0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">🎓 Elemen STEAM dalam Soal Ini:</p>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-s">S - SAINS</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Pengukuran massa/berat adonan secara akurat. Pemahaman tentang konsistensi dan variabilitas dalam proses pembuatan.</p>
+        </div>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-t">T - TEKNOLOGI</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Penggunaan timbangan untuk mengukur berat adonan. Alat tradisional (sendok) vs. alat modern (timbangan) untuk kontrol kualitas.</p>
+        </div>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-e">E - ENGINEERING</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Desain proses produksi yang konsisten. Penentuan standar mutu (toleransi 4 gram). Optimasi teknik penuangan untuk mengurangi variasi.</p>
+        </div>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-a">A - ARTS</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Seni tradisional membuat serabi dengan tangan. Kreativitas dalam mencari solusi untuk menjaga konsistensi sambil mempertahankan karakter tradisional.</p>
+        </div>
+        <div><span class="steam-badge steam-m">M - MATEMATIKA</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Perhitungan jangkauan/range, analisis data, perbandingan dengan standar. Menggunakan angka untuk mengambil keputusan bisnis.</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Activity 7: Practice Problem 2 -->
+    <div class="activity-card mb-6" style="background-color: #FFFCF5; border: 2px solid #E8D5B0; padding: 24px;">
+     <div class="flex items-start gap-4 cursor-pointer" onclick="toggleAnswer(this)">
+      <div class="card-number">
+       7️⃣
+      </div>
+      <div style="flex: 1;">
+       <p class="badge mb-3">SOAL LATIHAN 2</p>
+       <h3 class="font-heading font-bold text-lg mb-2" style="color: #3B2412;">⏱️ Masalah 2: Konsistensi Waktu Memasak &amp; Simpangan Rata-rata</h3>
+       <p style="color: #5C3D1E; line-height: 1.6;">Analisis variabilitas waktu memasak menggunakan simpangan rata-rata</p>
+      </div><i data-lucide="chevron-down" style="width: 24px; height: 24px; color: #C49144; flex-shrink: 0;"></i>
+     </div>
+     <div class="answer-box mt-4">
+      <div class="answer-content">
+       <div class="problem-box">
+        <div class="problem-title">
+         📖 Konteks Masalah:
+        </div>
+        <p style="color: #5C3D1E; line-height: 1.8; margin-bottom: 12px;">Di sebuah warung, seorang penjual serabi ngampin ingin memastikan kualitas rasa dan tekstur serabinya tetap konsisten. Penjual menyadari bahwa salah satu faktor penting adalah lama waktu memasak setiap serabi di atas tungku. Jika waktu memasak terlalu lama atau terlalu cepat, serabi bisa menjadi terlalu kering atau kurang matang.<br><br>
+          Untuk mengevaluasi proses memasaknya, penjual mencatat waktu memasak (dalam menit) untuk beberapa serabi yang dibuat pada hari itu untuk menemukan tingkat kematangan yang pas. Data yang diperoleh:</p>
+        <table class="data-table">
+         <tbody>
+          <tr>
+           <th>Cetakan ke-</th>
+           <th>Lama Memasak (Menit)</th>
+          </tr>
+          <tr>
+           <td>1</td>
+           <td>5 menit</td>
+          </tr>
+          <tr>
+           <td>2</td>
+           <td>6 menit</td>
+          </tr>
+          <tr>
+           <td>3</td>
+           <td>8 menit</td>
+          </tr>
+          <tr>
+           <td>4</td>
+           <td>6 menit</td>
+          </tr>
+          <tr>
+           <td>5</td>
+           <td>5 menit</td>
+          </tr>
+          <tr>
+           <td>6</td>
+           <td>5 menit</td>
+          </tr>
+          <tr>
+           <td>7</td>
+           <td>7 menit</td>
+          </tr>
+         </tbody>
+        </table>
+        <p style="color: #5C3D1E; line-height: 1.8; margin-top: 12px;"><strong>Pertanyaan:</strong> Hitunglah rata-rata waktu memasak serabi, tentukan simpangan rata-rata dari data waktu memasak tersebut, kemudian jelaskan apakah waktu memasak yang dilakukan penjual sudah cukup konsisten!</p>
+       </div><!-- Solution Walkthrough -->
+       <div style="background-color: #F5DFA0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">✅ SOLUSI &amp; PENJELASAN LANGKAH DEMI LANGKAH:</p>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">Step 1: Hitung Rata-rata (Mean)</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.8;"><strong>Data:</strong> 5, 6, 8, 6, 5, 5, 7 (total 7 data)<br><br><strong>Rata-rata = (5 + 6 + 8 + 6 + 5 + 5 + 7) ÷ 7</strong><br>
+           Rata-rata = 42 ÷ 7 = <span class="example-highlight">6 menit</span></p>
+        </div>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">Step 2: Hitung Simpangan Setiap Data Terhadap Rata-rata</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.8; margin-bottom: 8px;"><strong>Simpangan = |Data - Rata-rata| = |Data - 6|</strong></p>
+         <table class="data-table">
+          <tbody>
+           <tr>
+            <th>Data</th>
+            <th>Simpangan |Data - 6|</th>
+           </tr>
+           <tr>
+            <td>5</td>
+            <td>|5 - 6| = <strong>1</strong></td>
+           </tr>
+           <tr>
+            <td>6</td>
+            <td>|6 - 6| = <strong>0</strong></td>
+           </tr>
+           <tr>
+            <td>8</td>
+            <td>|8 - 6| = <strong>2</strong></td>
+           </tr>
+           <tr>
+            <td>6</td>
+            <td>|6 - 6| = <strong>0</strong></td>
+           </tr>
+           <tr>
+            <td>5</td>
+            <td>|5 - 6| = <strong>1</strong></td>
+           </tr>
+           <tr>
+            <td>5</td>
+            <td>|5 - 6| = <strong>1</strong></td>
+           </tr>
+           <tr>
+            <td>7</td>
+            <td>|7 - 6| = <strong>1</strong></td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">Step 3: Hitung Simpangan Rata-rata</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.8;"><strong>Simpangan Rata-rata = (Jumlah semua simpangan) ÷ Banyak data</strong><br><br>
+           Jumlah simpangan = 1 + 0 + 2 + 0 + 1 + 1 + 1 = 6<br>
+           Simpangan Rata-rata = 6 ÷ 7 = <span class="example-highlight">0,86 menit</span> (≈ 0,9 menit atau 51 detik)</p>
+        </div>
+        <div class="concept-box">
+         <p style="color: #3B2412; font-weight: 600; margin-bottom: 8px;">🎯 JAWABAN &amp; INTERPRETASI:</p>
+         <p style="color: #5C3D1E; font-size: 14px; line-height: 1.8; margin-bottom: 8px;"><strong>Rata-rata waktu memasak = 6 menit</strong><br><strong>Simpangan Rata-rata = 0,86 menit (≈ 51 detik)</strong><br><br><strong>Apakah Konsisten?</strong> <span style="background-color: #B4FFD9; padding: 6px 12px; border-radius: 4px; font-weight: 600;">✅ YA, CUKUP KONSISTEN!</span><br><br><strong>Alasan:</strong><br>
+           • Simpangan rata-rata hanya 0,86 menit menunjukkan bahwa data tersebar DEKAT dengan nilai rata-ratanya<br>
+           • Variasi waktu memasak hanya berkisar ±0,86 menit dari rata-rata 6 menit<br>
+           • Ini berarti waktu memasak berkisar antara (6 - 0,86) = 5,14 menit sampai (6 + 0,86) = 6,86 menit<br>
+           • Rentang ini sangat kecil, menunjukkan penjual SUDAH TERAMPIL dalam mengatur waktu memasak<br>
+           • Kualitas serabi yang dihasilkan SEHARUSNYA cukup konsisten</p>
+        </div>
+        <div class="tip-box">
+         <p style="color: #A07432; font-weight: 600;"><i data-lucide="lightbulb" style="width: 14px; height: 14px; display: inline; vertical-align: text-bottom;"></i> Tips Interpretasi Simpangan Rata-rata:</p>
+         <p style="color: #5C3D1E; font-size: 14px; margin-top: 6px;"><strong>Semakin KECIL simpangan rata-rata = SEMAKIN KONSISTEN data</strong><br>
+           Dalam kasus ini, 0,86 adalah SANGAT KECIL dibanding dengan rata-rata 6, jadi penjual BENAR-BENAR KONSISTEN! 🎯</p>
+        </div>
+       </div><!-- Ethnomathematics Section -->
+       <div class="ethno-box">
+        <div class="ethno-title"><i data-lucide="globe" style="width: 18px; height: 18px;"></i> Etnomatematika: Keahlian Tradisional &amp; Pengukuran Presisi
+        </div>
+        <div class="ethno-text">
+         <p style="margin-bottom: 10px;"><strong>⏰ Pengukuran Waktu Tradisional:</strong> Penjual serabi ngampin tidak menggunakan timer digital, melainkan mengandalkan indera dan PENGALAMAN untuk mengukur waktu memasak. Ini adalah bentuk "jamak internal" yang dikembangkan melalui praktik berulang-ulang selama bertahun-tahun.</p>
+         <p style="margin-bottom: 10px;"><strong>📊 Simpangan Rata-rata sebagai Ukuran Presisi:</strong> Dengan menghitung simpangan rata-rata, penjual dapat MENGUKUR SEBERAPA PRESISI kemampuannya secara matematis. Angka 0,86 menit membuktikan bahwa intuisi dan pengalaman penjual SANGAT AKURAT dan KONSISTEN.</p>
+         <p><strong>🔄 Koneksi:</strong> Etnomatematika di sini menunjukkan bagaimana pengetahuan tradisional (intuisi, pengalaman, dan keterampilan manual) dapat DIVALIDASI dan DITINGKATKAN melalui analisis matematika modern, tanpa menghilangkan karakter tradisionalnya.</p>
+        </div>
+       </div><!-- STEAM Breakdown -->
+       <div style="background-color: #FFFCF5; border: 2px solid #E8D5B0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <p style="color: #3B2412; font-weight: 600; margin-bottom: 12px;">🎓 Elemen STEAM dalam Soal Ini:</p>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-s">S - SAINS</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Pemahaman tentang proses masak/pemanasan. Reaksi kimia adonan terhadap panas. Bagaimana waktu mempengaruhi tekstur dan rasa serabi.</p>
+        </div>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-t">T - TEKNOLOGI</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Penggunaan timer untuk mengukur waktu secara akurat. Tungku tradisional vs. modern. Kontrol suhu dan waktu memasak.</p>
+        </div>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-e">E - ENGINEERING</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Optimasi waktu memasak untuk hasil terbaik. Standar kualitas (tingkat kematangan). Desain proses untuk mencapai konsistensi.</p>
+        </div>
+        <div style="margin-bottom: 10px;"><span class="steam-badge steam-a">A - ARTS</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Seni memasak yang dikembangkan melalui intuisi dan pengalaman. Kreativitas dalam menyesuaikan waktu memasak untuk kondisi berbeda.</p>
+        </div>
+        <div><span class="steam-badge steam-m">M - MATEMATIKA</span>
+         <p style="color: #5C3D1E; font-size: 13px; margin-top: 4px;">Perhitungan rata-rata, simpangan absolut, simpangan rata-rata. Analisis variabilitas data untuk mengevaluasi konsistensi.</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Closing -->
+    <div class="animate-fade-in-up rounded-2xl p-8 text-center mb-10" style="background: linear-gradient(135deg, #3B2412 0%, #5C3D1E 100%); color: #FDF6EC;">
+     <div class="flex justify-center mb-4"><i data-lucide="check-circle" style="width: 40px; height: 40px;"></i>
+     </div>
+     <h3 class="font-heading text-2xl font-bold mb-3" id="el-closing-label">Kegiatan Selesai! 🎉</h3>
+     <p class="leading-relaxed mb-4 text-lg" id="el-closing-text">Selamat! Kamu telah menyelesaikan semua kegiatan pembelajaran dan mengerjakan dua soal latihan dengan penuh analisis. Kamu sudah memahami bagaimana statistika (median, modus, jangkauan, dan simpangan rata-rata) membantu penjual serabi membuat keputusan yang lebih baik. Pembelajaran dengan konteks nyata seperti ini akan membuat konsep matematika lebih bermakna! 🚀📊</p>
+     <p style="color: #D4A574; font-size: 14px; margin-top: 12px;">Siap untuk tantangan soal-soal lebih lanjut? Mari tingkatkan pemahamanmu! 💪</p>
+    </div><!-- Footer -->
+    <div class="animate-fade-in-up text-center">
+     <p class="text-xs" style="color: #B89B6A;">LKPD Matematika Kelas 8 • Statistika • Guiding Activities • Median &amp; Modus • Dengan Etnomatematika &amp; STEAM</p>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: "Kegiatan Pembelajaran",
+      subtitle: "Mari Belajar Median & Modus dengan Eksperimen",
+      intro_text: "Kegiatan pembelajaran ini adalah aktivitas terpandu untuk membantu kamu menerapkan konsep median dan modus dalam situasi nyata. Melalui pengamatan, analisis data, dan diskusi, kamu akan memahami bagaimana statistika membantu penjual Serabi Ngampin membuat keputusan bisnis yang lebih baik! 📊",
+      closing_label: "Kegiatan Selesai! 🎉",
+      closing_text: "Selamat! Kamu telah menyelesaikan semua kegiatan pembelajaran dan mengerjakan dua soal latihan dengan penuh analisis. Kamu sudah memahami bagaimana statistika (median, modus, jangkauan, dan simpangan rata-rata) membantu penjual serabi membuat keputusan yang lebih baik. Pembelajaran dengan konteks nyata seperti ini akan membuat konsep matematika lebih bermakna! 🚀📊",
+      background_color: "#FDF6EC",
+      surface_color: "#FFFCF5",
+      text_color: "#3B2412",
+      primary_action_color: "#C49144",
+      secondary_action_color: "#5C3D1E",
+      font_family: "Merriweather",
+      font_size: 16
+    };
+
+    function toggleAnswer(header) {
+      const card = header.closest('.activity-card');
+      const answerBox = card.querySelector('.answer-box');
+      const icon = header.querySelector('i');
+      
+      answerBox.classList.toggle('show');
+      icon.style.transform = answerBox.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+
+      document.getElementById('el-main-title').textContent = c.main_title;
+      document.getElementById('el-subtitle').textContent = c.subtitle;
+      document.getElementById('el-intro-text').innerHTML = c.intro_text;
+      document.getElementById('el-closing-label').textContent = c.closing_label;
+      document.getElementById('el-closing-text').innerHTML = c.closing_text;
+
+      const wrapper = document.getElementById('app-wrapper');
+      wrapper.style.backgroundColor = c.background_color;
+
+      document.querySelectorAll('.font-heading').forEach(el => {
+        el.style.fontFamily = `${c.font_family}, Georgia, serif`;
+        el.style.color = c.text_color;
+      });
+
+      const base = c.font_size;
+      document.getElementById('el-main-title').style.fontSize = `${base * 2.8}px`;
+      document.getElementById('el-subtitle').style.fontSize = `${base * 1.3}px`;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => applyConfig(config),
+        mapToCapabilities: (config) => {
+          const c = { ...defaultConfig, ...config };
+          const mkColor = (key) => ({
+            get: () => c[key] || defaultConfig[key],
+            set: (v) => { c[key] = v; window.elementSdk.setConfig({ [key]: v }); }
+          });
+          return {
+            recolorables: [
+              mkColor('background_color'),
+              mkColor('surface_color'),
+              mkColor('text_color'),
+              mkColor('primary_action_color'),
+              mkColor('secondary_action_color')
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => c.font_family || defaultConfig.font_family,
+              set: (v) => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+            },
+            fontSizeable: {
+              get: () => c.font_size || defaultConfig.font_size,
+              set: (v) => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+            }
+          };
+        },
+        mapToEditPanelValues: (config) => {
+          const c = { ...defaultConfig, ...config };
+          return new Map([
+            ["main_title", c.main_title],
+            ["subtitle", c.subtitle],
+            ["intro_text", c.intro_text],
+            ["closing_label", c.closing_label],
+            ["closing_text", c.closing_text]
+          ]);
+        }
+      });
+    }
+
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e6847a5a36a3541',t:'MTc3NTIyMTQ3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
